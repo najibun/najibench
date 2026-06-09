@@ -1,0 +1,43 @@
+services:
+
+  app:
+    build:
+      context: ./app
+
+    container_name: benchmark-app
+
+    ports:
+      - "4000:3000"
+
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/benchmark
+
+    depends_on:
+      - postgres
+
+    command: npm run dev
+
+  postgres:
+    image: postgres:17-alpine
+
+    container_name: benchmark-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: benchmark
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    ports:
+      - "6432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
